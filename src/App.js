@@ -15,14 +15,9 @@ export default function Board() {
   const [currentPlayerIsX, toggleCurrentPlayer]= useState(true)
   const [status, setStatusText]= useState("X's turn")
   const [turnsPlayed, setTurnsPlayed]= useState(0);
+  const [winner, setWinner]= useState(null)
   
   useEffect(()=>{
-  const winner = isWinnerFound()
-  if(winner)
-    setStatusText(`${winner} Won !`)
-  if(turnsPlayed===9 && !winner)
-    setStatusText(`Its a Tie !`)
-  }, [squares, turnsPlayed])
 
   function isWinnerFound(){
     const winningIndexes=[
@@ -43,16 +38,27 @@ export default function Board() {
       }
     }
   }
+
+  const winner=isWinnerFound()
+  if(winner){
+    setWinner(winner)
+    setStatusText(`${winner} Won !`)
+  }
+  if(turnsPlayed===9 && !winner)
+    setStatusText(`Its a Tie !`)
+  }, [squares, turnsPlayed])
+
+
   
   const handleSquareClick=(i)=>{
     setTurnsPlayed(turnsPlayed+1);
-    if(squares[i] || isWinnerFound())
+    if(squares[i] || winner)
     return;
     const nextBoard = squares.slice()
     nextBoard[i]= currentPlayerIsX ? 'X' : 'O'
     setSquares(nextBoard)
     toggleCurrentPlayer(!currentPlayerIsX);
-    currentPlayerIsX && !isWinnerFound() ? setStatusText("O's turn"): setStatusText("X's turn")
+    currentPlayerIsX && !winner ? setStatusText("O's turn"): setStatusText("X's turn")
   }
 
   return (
